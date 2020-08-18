@@ -26,6 +26,9 @@ public class Main {
         bName.sendKeys("My Buiseness");
         bAddress.sendKeys("Some Address");
         openTime.sendKeys("value","02:20");
+        //openTime.sendKeys("02:20");
+        //AM PM not Setting
+
         closeTime.sendKeys("value","15:25");
         //driver.findElement(By.id("open")).setAttribute("value", "your value");
 
