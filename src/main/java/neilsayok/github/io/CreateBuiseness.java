@@ -5,6 +5,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -31,9 +32,15 @@ public class CreateBuiseness {
     DateTimeFormatter am_pmformatter;
 
 
-    public CreateBuiseness() {
+    public CreateBuiseness() throws InterruptedException {
+
+        ChromeOptions options = new ChromeOptions();
+        options.addArguments("--headless", "--disable-gpu", "--window-size=1920,1200", "--ignore-certificate-errors","--log-level=3");
         System.setProperty("webdriver.chrome.driver", driverPath);
-        driver = new ChromeDriver();
+        System.setProperty("webdriver.chrome.silentOutput", "true");
+
+        driver = new ChromeDriver(options);
+        //driver = new ChromeDriver();
         faker = new Faker();
 
         timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
@@ -41,6 +48,7 @@ public class CreateBuiseness {
 
 
         setWebElement();
+
         init();
     }
 
@@ -66,9 +74,7 @@ public class CreateBuiseness {
     }
 
 
-
-    public void init() {
-        driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+    public void init() throws InterruptedException {
 
         bAddress.sendKeys(faker.address().streetAddress());
 
@@ -91,7 +97,8 @@ public class CreateBuiseness {
         closeTime.sendKeys(String.valueOf(am_pmformatter.format(endTime).charAt(0)));
 
 
-        int selectedRadio = ThreadLocalRandom.current().nextInt(1, 6 + 1);
+        int selectedRadio;
+        selectedRadio = ThreadLocalRandom.current().nextInt(1, 6 + 1);
 
 
         driver.findElement(By.xpath(radioXpaths.get(selectedRadio))).click();
@@ -102,7 +109,7 @@ public class CreateBuiseness {
 
         switch (selectedRadio) {
             case 1:
-                bName.sendKeys(faker.name().firstName()+" Resturant");
+                bName.sendKeys(faker.name().firstName() + " Resturant");
                 subRadioPaths = new HashMap<>();
                 subRadioPaths.put(1, "/html/body/div[1]/div/div/div[4]/div/div[1]/div/input[1]");
                 subRadioPaths.put(2, "/html/body/div[1]/div/div/div[4]/div/div[1]/div/input[2]");
@@ -111,13 +118,13 @@ public class CreateBuiseness {
                 driver.findElement(By.xpath(subRadioPaths.get(selectedSubRadio))).click();
                 break;
             case 2:
-                bName.sendKeys(faker.name().firstName()+" Bank");
+                bName.sendKeys(faker.name().firstName() + " Bank");
                 break;
             case 3:
-                bName.sendKeys(faker.name().firstName()+" Grocery");
+                bName.sendKeys(faker.name().firstName() + " Grocery");
                 break;
             case 4:
-                bName.sendKeys(faker.name().firstName()+" Medical");
+                bName.sendKeys(faker.name().firstName() + " Medical");
 
                 subRadioPaths = new HashMap<>();
                 subRadioPaths.put(1, "/html/body/div[1]/div/div/div[4]/div/div[4]/div/input[1]");
@@ -128,7 +135,7 @@ public class CreateBuiseness {
                 driver.findElement(By.xpath(subRadioPaths.get(selectedSubRadio))).click();
                 break;
             case 5:
-                bName.sendKeys(faker.name().firstName()+" Store");
+                bName.sendKeys(faker.name().firstName() + " Store");
 
                 subRadioPaths = new HashMap<>();
                 subRadioPaths.put(1, "/html/body/div[1]/div/div/div[4]/div/div[5]/div/input[1]");
@@ -138,18 +145,20 @@ public class CreateBuiseness {
                 driver.findElement(By.xpath(subRadioPaths.get(selectedSubRadio))).click();
                 break;
             case 6:
-                bName.sendKeys(faker.name().firstName()+" Shop");
+                bName.sendKeys(faker.name().firstName() + " Group");
                 driver.findElement(By.xpath("/html/body/div[1]/div/div/div[4]/div/div[6]/div/textarea"))
-                        .sendKeys("Some Shop Type");
+                        .sendKeys(faker.company().industry());
                 break;
         }
 
         driver.findElement(By.xpath("/html/body/div[1]/div/div/button")).click();
         driver.switchTo().alert().accept();
-        driver.navigate().refresh();
+        driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+
+        Thread.sleep(1000);
+
+        driver.close();
     }
-
-
 
 
 }
